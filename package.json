@@ -1,0 +1,27 @@
+{
+  "name": "product-spec",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "spec": "node harness/spec-check.mjs",
+    "typecheck": "tsc -p .",
+    "behaviour": "node harness/behaviour.mjs",
+    "look": "node harness/look.mjs",
+    "handoff": "node harness/handoff.mjs",
+    "check": "npm run spec && npm run typecheck && npm run behaviour && npm run look"
+  },
+  "dependencies": {
+    "ai-ready-design-system": "github:nayyymarques-eng/ai-ready-design-system#54ee28961a1bcd40c183cb3a8ff3225aca0db4d2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "esbuild": "0.28.2",
+    "playwright": "1.63.0",
+    "typescript": "7.0.2"
+  }
+}
