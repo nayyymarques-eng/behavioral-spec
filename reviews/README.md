@@ -1,11 +1,10 @@
 # Spec review, with a synthetic user
 
-A synthetic user reads the spec before anyone builds the screen, as each role, and checks it against the rules and what real users said. It is the second gate, after `npm run spec`: the spec check finds what is missing, and the synthetic user finds what is wrong.
+A synthetic user reads a feature in the spec before anyone builds it, as each role: its flow, its screens and their cases. It checks them against the official rules in `spec/sources/` and the persona sheets in `spec/personas/`, and it respects the decisions in `spec/decisions.md`. It is the second gate, after `npm run spec`: the spec check finds what is missing, and the synthetic user finds what is wrong.
 
-The synthetic user comes from [grounded-synthetic-user](https://github.com/nayyymarques-eng/grounded-synthetic-user), for the same made-up product. To run it on this spec:
+The synthetic user comes from [grounded-synthetic-user](https://github.com/nayyymarques-eng/grounded-synthetic-user). It keeps no rules or persona sheets of its own: it reads them from this spec. To run it:
 
-1. Install that kit in this project, as its README says.
-2. In its hook, `.claude/hooks/black-box.mjs`, set `SPECS` to `spec`, so the agent can read this folder and nothing else.
-3. Ask Claude Code: "Use the synthetic-user agent to review spec/screens/request.md as privacy lead, in a spec review." Then: "Use the verifier on that report."
+1. Install that kit in this project, as its README says. Its hook lets the agent read `spec/` and nothing else of the project.
+2. Ask Claude Code: "Use the synthetic-user agent to review spec/flows/answer-a-request.md as privacy lead, in a spec review." Then: "Use the verifier on that report."
 
 Reports go in this folder. No review of this example has been run yet.

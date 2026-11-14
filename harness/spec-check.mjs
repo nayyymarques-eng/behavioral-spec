@@ -35,6 +35,19 @@ for (const s of spec.screens) {
   for (const st of s.states) for (const id of [...st.rules, ...st.goals]) if (!known.has(id)) fail('SPEC-02', `${st.id} cites ${id}, which does not exist`, s.file);
 }
 
+// SPEC-10: every decision names the flows or screens it applies to, and they exist; every role links a persona sheet that exists.
+const parts = new Set([...spec.flows.map(f => f.name), ...spec.screens.map(s => s.name)]);
+for (const d of spec.decisions) {
+  const where = (d['Applies to'] ?? '').split(',').map(x => x.trim()).filter(Boolean);
+  if (!where.length) fail('SPEC-10', `${d.ID} names no flow or screen it applies to`, 'spec/decisions.md');
+  for (const w of where) if (!parts.has(w)) fail('SPEC-10', `${d.ID} applies to "${w}", which is not a flow or a screen`, 'spec/decisions.md');
+}
+for (const r of spec.roles) {
+  const sheet = (r['Persona sheet'] ?? '').replace(/`/g, '').trim();
+  if (!sheet) fail('SPEC-10', `${r.ID} has no persona sheet`, 'spec/roles.md');
+  else if (!existsSync(join(root, 'spec', sheet))) fail('SPEC-10', `${r.ID} links ${sheet}, which does not exist`, 'spec/roles.md');
+}
+
 // SPEC-03: every rule is applied by a state of each screen it names.
 for (const r of spec.rules) {
   for (const where of r.Where.split(',').map(x => x.trim()).filter(Boolean)) {
@@ -111,4 +124,4 @@ const counts = spec.screens.map(s => `${s.name}: ${s.states.length} states, ${s.
 console.log(`Spec: ${spec.flows.length} flow, ${spec.rules.length} rules, ${spec.goals.length} goals, ${spec.decisions.length} decisions, ${spec.questions.length} open questions. ${counts}.`);
 if (triage.length) console.log(`To triage, for the design system owner:\n${[...new Set(triage)].join('\n')}`);
 if (fails.length) { console.log(fails.join('\n')); console.log(`FAIL: ${fails.length}`); process.exit(1); }
-console.log('PASS: SPEC-01 to SPEC-06, SPEC-08, SPEC-09');
+console.log('PASS: SPEC-01 to SPEC-06, SPEC-08 to SPEC-10');

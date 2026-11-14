@@ -1,24 +1,33 @@
 # The spec
 
-This folder describes how the product behaves: what each kind of user comes to do, the business rules, the steps of each task, and what each screen shows in each situation. People and AI tools read it before they build, and the checks test the product against it. It says nothing about how a screen looks: the design system says that.
+This folder is everything the product knows that an agent cannot look up in the code: who the users are, the official rules, the product decisions, the business rules, and what each feature does. It is written once. AI tools build from it, a synthetic user reviews it, and the checks test the product against it. It says nothing about how a screen looks: the design system says that.
 
-The spec has three levels: the product (the files at the top of this folder), the flows (`flows/`, one file per task) and the screens (`screens/`, one file per screen).
+The spec has two levels.
 
-Everything in this folder is an example for a made-up product: an inbox where a shop's privacy lead answers people's requests about their personal data, under the GDPR. It is the same product as in [grounded-synthetic-user](https://github.com/nayyymarques-eng/grounded-synthetic-user). Replace it with your own.
+- **The product**: what holds for every feature. The files at the top of this folder, `sources/` and `personas/`.
+- **The features**: what each feature does. `flows/`, one file per task, and `screens/`, one file per screen. A screen can sit in several flows.
 
-## The files
+Everything in this folder is an example for a made-up product: an inbox where a shop's privacy lead answers people's requests about their personal data, under the GDPR. Replace it with your own.
+
+## The product level
 
 | File | What it holds | IDs |
 |---|---|---|
+| `roles.md` | Who uses the product, what each role may see and do, and its persona sheet | R-01 |
+| `personas/` | One persona sheet per role, from interviews: each trait with its source and how many interviews say it | none |
 | `goals.md` | What each role comes to the product to get done | G-01 |
-| `roles.md` | Who uses the product, and what each role may see and do | R-01 |
+| `sources/` | The official rules: laws, regulator guidance and contracts, each with its official text. Written once, here. The synthetic user and the rules watch read them here | PRIV-01 |
+| `decisions.md` | The product decisions: choices the team made on purpose, with why, who decided, when, and the flows and screens they apply to | D-01 |
+| `rules.md` | The business rules: what the product does, each citing the official rules, decisions, goals or roles it comes from | BR-01 |
+| `questions.md` | What nobody has answered yet, who will, and what the product does meanwhile | Q-01 |
 | `glossary.md` | What each thing in the product is today, in one line, and the decision behind it | none |
-| `rules.md` | The business rules, each with the sources it comes from | BR-01 |
-| `decisions.md` | Choices made on purpose, so nobody flags them as errors | D-01 |
-| `questions.md` | What nobody has answered yet, and who will | Q-01 |
-| `sources/` | The official rules the business rules come from, copied from the knowledge base | PRIV-01 |
+
+## The feature level
+
+| Folder | What it holds | IDs |
+|---|---|---|
 | `flows/` | One file per task a role comes to do: what starts it, each step, who acts, and the screen and state each step lands on | F-01 |
-| `screens/` | One file per screen: its states, and examples that say exactly which state and which actions each case gets | ST-01, E-01 |
+| `screens/` | One file per screen: its states, and cases that say exactly which state and which actions each situation gets | ST-01, E-01 |
 
 An ID never changes when the wording does. Everything that uses a rule, a goal or a state cites its ID: the code, the checks, the handoff and the reviews. A search for an ID finds everything to look at again when it changes.
 
@@ -32,6 +41,21 @@ One row per rule in `rules.md`:
 | Rule | One rule, in plain words, that you can pass or fail |
 | Sources | The official rules, decisions, goals or roles it comes from, by ID. A rule with no source is an opinion: it goes to `questions.md` first |
 | Where | The screens that apply it |
+
+## How a decision is written
+
+One row per decision in `decisions.md`. There is one log for the whole product, even for a decision made while one flow was written: a decision made for one flow often holds for others.
+
+| Column | What it holds |
+|---|---|
+| ID | D- and a number |
+| Decision | The choice, in plain words |
+| Why | The reason, and where it came from: user research, a market insight, the business strategy, a technical limit. A decision never goes against an official rule |
+| Decided by | Who made it |
+| Applies to | The flows and screens it touches, by file name |
+| Date | When it was made. A decision that replaces another says so, and the old one stays, marked "replaced" |
+
+A business rule cites the decisions it follows, by ID. When an open question is answered, the answer becomes a decision.
 
 ## How a flow is written
 
@@ -99,8 +123,8 @@ The examples table is the exact truth. Each row is one case, with the facts that
 
 | Gate | When | What it checks | Run |
 |---|---|---|---|
-| Spec check | Every change to the spec | IDs, sources, every rule and goal used, every step of a flow lands on a state and every state is reached, every state covered by a case, every component named exists in the design system | `npm run spec` |
-| Spec review | Before the screen is built | A synthetic user reads the spec as each role, against the rules and what real users said | [grounded-synthetic-user](https://github.com/nayyymarques-eng/grounded-synthetic-user) |
+| Spec check | Every change to the spec | IDs, sources, every rule and goal used, every decision applies to a flow or screen that exists, every role has a persona sheet, every step of a flow lands on a state and every state is reached, every state covered by a case, every component named exists in the design system | `npm run spec` |
+| Spec review | Before the screen is built | A synthetic user reads a feature's flow, screens and cases as each role, against the official rules and the persona sheets, and respects the decisions | [grounded-synthetic-user](https://github.com/nayyymarques-eng/grounded-synthetic-user) |
 | Behaviour check | Every pull request that touches the screen | The built screen against every state and every example | `npm run behaviour` |
 | Design system check | Every pull request that touches the screen | How each state looks, with the design system's own harness | `npm run look` |
 | Handoff | Every change to the spec | Writes the handoff from the spec, for whoever builds the backend | `npm run handoff` |

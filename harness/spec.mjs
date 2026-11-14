@@ -122,7 +122,7 @@ const table = file => tables(readFileSync(join(specDir, file), 'utf8'))[0] ?? []
 
 /** The whole spec. */
 export function readSpec() {
-  const sources = readdirSync(join(specDir, 'sources')).filter(f => f.endsWith('.md'))
+  const sources = readdirSync(join(specDir, 'sources')).filter(f => f.endsWith('.md') && f !== 'README.md')
     .flatMap(f => (tables(readFileSync(join(specDir, 'sources', f), 'utf8'))[0] ?? []).map(r => ({ ...r, file: `spec/sources/${f}` })));
   return {
     goals: table('goals.md'), roles: table('roles.md'), rules: table('rules.md'), decisions: table('decisions.md'),
